@@ -23,6 +23,12 @@ public_users.post("/register", (req,res) => {
   return res.status(404).json({message: "Unable to register user."});
 });
 
+function getBookList(){
+  return new Promise((resolve,reject)=>{
+    resolve(books);
+  })
+}
+
 // Get the book list available in the shop
 function getFromISBN(isbn){
   let book_ = books[isbn];  
@@ -35,6 +41,18 @@ function getFromISBN(isbn){
   })
 } 
 
+function getFromISBN(isbn){
+  let book_ = books[isbn];  
+  return new Promise((resolve,reject)=>{
+    if (book_) {
+      resolve(book_);
+    }else{
+      reject("Unable to find book!");
+    }    
+  })
+}
+
+
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
@@ -43,6 +61,19 @@ public_users.get('/isbn/:isbn',function (req, res) {
     (error) => res.send(error)
   )
  });
+
+function getFromAuthor(author){
+  let output = [];
+  return new Promise((resolve,reject)=>{
+    for (var isbn in books) {
+      let book_ = books[isbn];
+      if (book_.author === author){
+        output.push(book_);
+      }
+    }
+    resolve(output);  
+  })
+}
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
@@ -52,6 +83,19 @@ public_users.get('/author/:author',function (req, res) {
     result =>res.send(JSON.stringify(result, null, 4))
   );
 });
+
+function getFromTitle(title){
+  let output = [];
+  return new Promise((resolve,reject)=>{
+    for (var isbn in books) {
+      let book_ = books[isbn];
+      if (book_.title === title){
+        output.push(book_);
+      }
+    }
+    resolve(output);  
+  })
+}
 
 
 // Get all books based on title
